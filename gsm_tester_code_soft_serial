@@ -1,0 +1,27 @@
+#include <SoftwareSerial.h>
+
+// RX, TX pins 
+// Note: Ensure pins 17 and 18 support change interrupts on your specific Arduino board.
+SoftwareSerial SerialAT(17, 18); 
+
+void setup() {
+  Serial.begin(115200); // Changed to 9600 for reliable SoftwareSerial communication
+  delay(1000);
+  
+  SerialAT.begin(115200); // SoftwareSerial struggles or fails at 115200
+  delay(1000);
+  
+  Serial.println("System activated");
+}
+
+void loop() {
+  // Forward data from Hardware Serial to Software Serial (AT)
+  if (Serial.available()) {
+    SerialAT.write(Serial.read()); // Use write() to pass the raw byte data intact
+  }
+  
+  // Forward data from Software Serial (AT) to Hardware Serial
+  if (SerialAT.available()) {
+    Serial.write(SerialAT.read()); // Fixed: Changed Serial.read() to SerialAT.read()
+  }
+}
