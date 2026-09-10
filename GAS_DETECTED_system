@@ -1,0 +1,33 @@
+ #define MQ2_PIN A5
+#define LED 12
+#define BUZZER 10
+
+int threshold = 100;   // Adjust this value
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
+
+  Serial.begin(9600);
+
+  Serial.println("MQ-2 Warming up...");
+  delay(10000);  // Sensor warm-up time (20 sec)
+}
+
+void loop() {
+  int gasValue = analogRead(MQ2_PIN);
+
+  Serial.print("Gas Value: ");
+  Serial.println(gasValue);
+
+  if (gasValue > threshold) {
+    digitalWrite(LED, HIGH);
+    digitalWrite(BUZZER, HIGH);
+    Serial.println("⚠️ GAS DETECTED!");
+  } else {
+    digitalWrite(LED, LOW);
+    digitalWrite(BUZZER, LOW);
+  }
+
+  delay(500);
+}
