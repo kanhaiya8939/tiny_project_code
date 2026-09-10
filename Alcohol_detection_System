@@ -1,0 +1,77 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+#define MQ3_PIN A0
+#define BUZZER 8
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+int value;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(BUZZER, OUTPUT);
+
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0,0);
+  lcd.print("Alcohol System");
+  delay(2000);
+  lcd.clear();
+}
+
+void loop() {
+
+  value = analogRead(MQ3_PIN);
+
+  Serial.print("Alcohol Value: ");
+  Serial.println(value);
+
+  lcd.setCursor(0,0);
+  lcd.print("Value: ");
+  lcd.print(value);
+  lcd.print("   ");
+
+  // -------- LEVEL DETECTION --------
+
+  if (value >= 150 && value < 300) {
+    lcd.setCursor(0,1);
+    lcd.print("CLEAN AIR      ");
+    digitalWrite(BUZZER, LOW);
+  }
+
+  else if (value >= 300 && value < 450) {
+    lcd.setCursor(0,1);
+    lcd.print("MILD ALCOHOL   ");
+    digitalWrite(BUZZER, LOW);
+  }
+
+  else if (value >= 450 && value < 650) {
+    lcd.setCursor(0,1);
+    lcd.print("MEDIUM ALCOHOL ");
+    
+    // Slow beep
+    digitalWrite(BUZZER, HIGH);
+    delay(200);
+    digitalWrite(BUZZER, LOW);
+    delay(300);
+  }
+
+  else if (value >= 650) {
+    lcd.setCursor(0,1);
+    lcd.print("HIGH ALCOHOL!! ");
+    
+    // Continuous beep
+    digitalWrite(BUZZER, HIGH);
+  }
+
+  else {
+    lcd.setCursor(0,1);
+    lcd.print("NO DATA        ");
+    digitalWrite(BUZZER, LOW);
+  }
+
+  delay(300);
+}
