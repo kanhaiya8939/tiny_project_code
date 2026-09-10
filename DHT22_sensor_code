@@ -1,0 +1,57 @@
+#include <WiFi.h>
+#include <DHT.h>
+#include <ThingSpeak.h>
+
+#define DHTPIN 5        // Changed from D5 to 5 (adjust to your actual GPIO)
+#define DHTTYPE DHT22   
+
+DHT dht(DHTPIN, DHTTYPE);
+WiFiClient client;
+
+unsigned long myChannelNumber = 3306506;
+const char* myWriteAPIKey = "YOUR_ACTUAL_KEY_HERE"; // Don't forget to paste your key!
+
+void setup() {
+  Serial.begin(9600);
+  WiFi.begin("vivo", "12345678");
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  
+  Serial.println("\nESP32-S3 Connected!");
+  Serial.println(WiFi.localIP());
+  
+  dht.begin();
+  ThingSpeak.begin(client);
+}
+
+void loop() {
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
+
+  // Check if reading failed
+  if (isnan(h) || isnan(t)) {
+    Serial.println("Failed to read from DHT sensor!");
+    return;
+  }
+
+  Serial.println("Temp: " + String(t) + "°C, Hum: " + String(h) + "%");
+
+  // Prepare data for ThingSpeak
+  ThingSpeak.setField(1, t);
+  ThingSpeak.setField(2, h);
+
+  // Write to ThingSpeak
+  int x = ThingSpeak.writeFields(myChannelNumber, myWriteAPIKey);
+
+  if(x == 200){
+    Serial.println("Channel update successful.");
+  } else {
+    Serial.println("Problem updating channel. HTTP error code " + String(x));
+  }
+
+  // ThingSpeak needs a ~15 second delay between updates
+  delay(20000); 
+}
