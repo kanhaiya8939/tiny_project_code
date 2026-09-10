@@ -1,0 +1,49 @@
+const float OffSet = 0.420;
+const float ScaleFactor = 379.8670;
+
+const int sensorPin = 1;
+
+int samples = 50;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Water Pressure Sensor (Averaged)");
+}
+
+void loop() {
+
+  long sum = 0;
+
+  // multiple readings
+  for(int i=0;i<samples;i++){
+    sum = sum + analogRead(sensorPin);
+    delay(5);
+  }
+
+  // average ADC value
+  float avgADC = sum / samples;
+
+  // voltage calculate
+  float V = avgADC * 3.3 / 4095.0;
+
+  // offset remove
+  float effectiveV = V - OffSet;
+
+  // pressure calculate
+  float P_KPa = effectiveV * ScaleFactor;
+
+  Serial.print("Voltage: ");
+  Serial.print(V,3);
+  Serial.print(" V | Pressure: ");
+
+  if(P_KPa < 0){
+    Serial.print(0.0,1);
+  }
+  else{
+    Serial.print(P_KPa,1);
+  }
+
+  Serial.println(" KPa");
+
+  delay(1000);
+}
