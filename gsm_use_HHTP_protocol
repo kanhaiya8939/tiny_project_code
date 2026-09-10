@@ -1,0 +1,127 @@
+// Hardware Serial 1 ke liye Pins define karein (Aap koi bhi free pins chun sakte hain)
+// ESP32-S3 ke liye hum generic Pins use kar rahe hain, aap apne board ke hisab se badal sakte hain
+#define RX1_PIN 18  // ESP32-S3 ka Pin 18 (SIM7670 ke TX se jodna hai)
+#define TX1_PIN 17  // ESP32-S3 ka Pin 17 (SIM7670 ke RX se jodna hai)
+
+void setup() {
+  // Computer Hardware Serial (Serial Monitor ke liye)
+  Serial.begin(115200); 
+  delay(1000);
+  
+  // ESP32-S3 ka dusra Hardware Serial (Serial1) GSM ke liye
+  // Baud rate 115200 aur pins specify kiye hain
+  Serial1.begin(115200, SERIAL_8N1, RX1_PIN, TX1_PIN);
+  delay(1000);
+  
+  Serial.println("ESP32-S3 to SIM7670 Bridge Ready");
+  Serial.println("Serial Monitor me 'AT' type karke enter dabayein...");
+}
+
+void loop() {
+  Serial.println("AT");
+  // Serial Monitor (Computer) se data lekar GSM module ko bhejna
+  if (Serial.find(AT)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+   else if (Serial.find(ATE0)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+ 
+
+    else if (Serial.find(AT+CPIN?)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+CREG?)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+
+     else if (Serial.find(AT+CGDCONT=1,"IP","bsnlnet")) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+CGACT=1,1)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+NETOPEN)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+IPADDR)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+CSSLCFG="sslversion",0,4)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+CSSLCFG="authmode",0,0)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+HTTPINIT)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+HTTPPARA="URL","https://script.google.com/macros/s/AKfycby-q-dMNAF_HDFYGSkIWStSF3Cs9q3hat19u2ZzjaFse3KxZoMsYDtSkRGGQP6LfshO/exec")) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+HTTPPARA="CONTENT","application/json")) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+HTTPDATA=29,5000)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find({"value1":25,"value2":65})) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+     else if (Serial.find(AT+HTTPACTION=1)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+delay(10000)
+     else if (Serial.find(AT+TERM)) {
+    Serial1.write(Serial.read());
+    delay(100);
+    Serial.println(Serial1.read());
+  }
+
+    
+}
